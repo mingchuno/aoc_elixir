@@ -3,11 +3,20 @@ defmodule Y2019.Day02.Day02 do
     program =
       AocFile.read_input_file(input_file)
       |> parse()
-      |> to_map()
-      |> Map.put(1, 12)
-      |> Map.put(2, 2)
 
-    end_idx = div(map_size(program), 4)
+    size = length(program)
+
+    run_with_noun_verb(program, size, 12, 2)
+  end
+
+  defp run_with_noun_verb(corrupted_program, size, noun, verb) do
+    program =
+      corrupted_program
+      |> to_map(size)
+      |> Map.put(1, noun)
+      |> Map.put(2, verb)
+
+    end_idx = div(size, 4)
 
     run_program(program, end_idx, 0)
     |> Map.get(0)
@@ -47,7 +56,7 @@ defmodule Y2019.Day02.Day02 do
     |> Enum.map(&String.to_integer/1)
   end
 
-  defp to_map(program) do
-    0..(length(program) - 1) |> Stream.zip(program) |> Enum.into(%{})
+  defp to_map(program, size) do
+    0..(size - 1) |> Stream.zip(program) |> Enum.into(%{})
   end
 end
