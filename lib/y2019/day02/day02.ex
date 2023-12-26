@@ -9,6 +9,22 @@ defmodule Y2019.Day02.Day02 do
     run_with_noun_verb(program, size, 12, 2)
   end
 
+  def part_2(input_file) do
+    program =
+      AocFile.read_input_file(input_file)
+      |> parse()
+
+    size = length(program)
+
+    for(
+      n <- 0..99,
+      v <- 0..99,
+      do: {n, v}
+    )
+    |> Enum.find(fn {n, v} -> run_with_noun_verb(program, size, n, v) == 19_690_720 end)
+    |> then(fn {n, v} -> 100 * n + v end)
+  end
+
   defp run_with_noun_verb(corrupted_program, size, noun, verb) do
     program =
       corrupted_program
