@@ -1,19 +1,14 @@
+import AocFile
+
 defmodule Y2019.Day02.Day02 do
   def part_1(input_file) do
-    program =
-      AocFile.read_input_file(input_file)
-      |> parse()
-
+    program = read_input_file(input_file) |> parse()
     size = length(program)
-
     run_with_noun_verb(program, size, 12, 2)
   end
 
   def part_2(input_file) do
-    program =
-      AocFile.read_input_file(input_file)
-      |> parse()
-
+    program = read_input_file(input_file) |> parse()
     size = length(program)
 
     for(
