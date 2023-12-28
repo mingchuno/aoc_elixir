@@ -11,7 +11,12 @@ defmodule Y2019.Day05.Day05 do
     diagnostic_code
   end
 
-  def part_2(input_file) do
+  def part_2(input_file, input \\ 5) do
+    program = read_input_file(input_file) |> parse()
+    size = length(program)
+
+    output = run_program(to_map(program, size), size, 0, [input], [])
+    hd(output)
   end
 
   defp run_program(_program, size, i, _inputs, outputs) when size == i, do: outputs
@@ -47,6 +52,32 @@ defmodule Y2019.Day05.Day05 do
         new_out = [param_0 | outputs]
         run_program(program, size, i + 2, inputs, new_out)
 
+      5 ->
+        param_0 = get_param.(0)
+        param_1 = get_param.(1)
+        next_pointer = if param_0 == 0, do: i + 3, else: param_1
+        run_program(program, size, next_pointer, inputs, outputs)
+
+      6 ->
+        param_0 = get_param.(0)
+        param_1 = get_param.(1)
+        next_pointer = if param_0 != 0, do: i + 3, else: param_1
+        run_program(program, size, next_pointer, inputs, outputs)
+
+      7 ->
+        param_0 = get_param.(0)
+        param_1 = get_param.(1)
+        store = if param_0 < param_1, do: 1, else: 0
+        new_program = Map.put(program, program[i + 3], store)
+        run_program(new_program, size, i + 4, inputs, outputs)
+
+      8 ->
+        param_0 = get_param.(0)
+        param_1 = get_param.(1)
+        store = if param_0 == param_1, do: 1, else: 0
+        new_program = Map.put(program, program[i + 3], store)
+        run_program(new_program, size, i + 4, inputs, outputs)
+
       99 ->
         outputs
     end
@@ -67,8 +98,6 @@ defmodule Y2019.Day05.Day05 do
       end
 
     padded_p_mode = p_mode ++ List.duplicate(0, instruction_size(op) - length(p_mode))
-    # IO.inspect(op, label: "op")
-    # IO.inspect(padded_p_mode, label: "p_mode")
     {op, padded_p_mode}
   end
 
@@ -78,6 +107,10 @@ defmodule Y2019.Day05.Day05 do
       2 -> 3
       3 -> 1
       4 -> 1
+      5 -> 2
+      6 -> 2
+      7 -> 3
+      8 -> 3
       99 -> 0
     end
   end
