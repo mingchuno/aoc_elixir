@@ -8,7 +8,7 @@ defmodule Y2019.Day01.Day01Test do
   end
 
   test "part 2 example" do
-    assert Day01.part_2("./inputs/2019/day1-example.txt") == 50346
+    assert Day01.part_2("./inputs/2019/day1-example.txt") == 50_346
   end
 
   test "part 2 real" do
