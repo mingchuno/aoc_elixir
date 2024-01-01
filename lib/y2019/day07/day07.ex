@@ -4,7 +4,7 @@ alias Y2019.Computer.Computer
 
 defmodule Y2019.Day07.Day07 do
   def part_1(input_file) do
-    program = read_input_file(input_file) |> parse()
+    program = read_input_file(input_file) |> Computer.parse()
 
     Permute.permutations([0, 1, 2, 3, 4])
     |> map(fn phase_settings -> run_amplifiers(program, phase_settings) end)
@@ -12,7 +12,7 @@ defmodule Y2019.Day07.Day07 do
   end
 
   def part_2(input_file) do
-    program = read_input_file(input_file) |> parse()
+    program = read_input_file(input_file) |> Computer.parse()
 
     Permute.permutations([5, 6, 7, 8, 9])
     |> map(fn phase_settings -> run_amplifiers_2(program, phase_settings) end)
@@ -31,7 +31,7 @@ defmodule Y2019.Day07.Day07 do
 
     init_state =
       map(phase_settings, fn phase ->
-        Computer.run_program(to_map(program, size), size, 0, [phase], [])
+        Computer.run_program(Computer.to_program_map(program, size), size, 0, [phase], [])
       end)
 
     hd(loop_amplifiers(init_state, size))
@@ -71,16 +71,5 @@ defmodule Y2019.Day07.Day07 do
       {:pending, x_program, x_i, x_outputs} ->
         Computer.run_program(x_program, size, x_i, [next_inputs], x_outputs)
     end
-  end
-
-  defp parse(inputs) do
-    inputs
-    |> List.first()
-    |> String.split(",")
-    |> map(&String.to_integer/1)
-  end
-
-  defp to_map(program, size) do
-    0..(size - 1) |> Stream.zip(program) |> into(%{})
   end
 end

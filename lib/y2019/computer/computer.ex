@@ -114,4 +114,11 @@ defmodule Y2019.Computer.Computer do
   def to_program_map(program, size) do
     0..(size - 1) |> Stream.zip(program) |> into(%{})
   end
+
+  def parse(inputs) do
+    inputs
+    |> List.first()
+    |> String.split(",")
+    |> Enum.map(&String.to_integer/1)
+  end
 end
