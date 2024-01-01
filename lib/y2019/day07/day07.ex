@@ -31,7 +31,7 @@ defmodule Y2019.Day07.Day07 do
 
     init_state =
       map(phase_settings, fn phase ->
-        Computer.run_program(Computer.to_program_map(program, size), size, 0, [phase], [])
+        Computer.run_program(Computer.to_program_map(program, size), 0, [phase], [])
       end)
 
     hd(loop_amplifiers(init_state, size))
@@ -53,14 +53,14 @@ defmodule Y2019.Day07.Day07 do
 
         next_state =
           scan(program_last_state, {:pending, nil, nil, next_input}, fn x, acc ->
-            pass_next_amplifier(x, acc, size)
+            pass_next_amplifier(x, acc)
           end)
 
         loop_amplifiers(next_state, size)
     end
   end
 
-  defp pass_next_amplifier(x, acc, size) do
+  defp pass_next_amplifier(x, acc) do
     next_inputs =
       case acc do
         {:pending, _, _, acc_outputs} -> hd(acc_outputs)
@@ -69,7 +69,7 @@ defmodule Y2019.Day07.Day07 do
 
     case x do
       {:pending, x_program, x_i, x_outputs} ->
-        Computer.run_program(x_program, size, x_i, [next_inputs], x_outputs)
+        Computer.run_program(x_program, x_i, [next_inputs], x_outputs)
     end
   end
 end
