@@ -11,7 +11,11 @@ defmodule Y2019.Day07.Day07Test do
     assert Day07.part_1("./inputs/2019/day7-real.txt") == 67023
   end
 
-  # test "part 2" do
-  #   assert Day07.part_2("./inputs/2019/day5-real.txt") == 12_077_198
-  # end
+  test "part 2" do
+    assert Day07.part_2("./inputs/2019/day7-real.txt") == 7_818_398
+  end
+
+  test "part 2 example" do
+    assert Day07.part_2("./inputs/2019/day7-example2.txt") == 139_629_729
+  end
 end

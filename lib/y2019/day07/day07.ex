@@ -1,29 +1,76 @@
 import AocFile
 import Enum
-alias Y2019.Computer.Computer
+alias Y2019.Day07.Computer
 
 defmodule Y2019.Day07.Day07 do
   def part_1(input_file) do
     program = read_input_file(input_file) |> parse()
 
     Permute.permutations([0, 1, 2, 3, 4])
-    |> Enum.map(fn phase_settings -> run_amplifiers(program, phase_settings) end)
-    |> Enum.max()
+    |> map(fn phase_settings -> run_amplifiers(program, phase_settings) end)
+    |> max()
   end
 
   def part_2(input_file) do
     program = read_input_file(input_file) |> parse()
 
     Permute.permutations([5, 6, 7, 8, 9])
-    |> Enum.map(fn phase_settings -> run_amplifiers(program, phase_settings) end)
-    |> Enum.max()
+    |> map(fn phase_settings -> run_amplifiers_2(program, phase_settings) end)
+    |> max()
   end
 
   defp run_amplifiers(program, phase_settings) do
-    Enum.reduce(phase_settings, 0, fn phase, output ->
+    reduce(phase_settings, 0, fn phase, output ->
       outputs = Computer.compute(program, [phase, output])
       hd(outputs)
     end)
+  end
+
+  defp run_amplifiers_2(program, phase_settings) do
+    size = length(program)
+
+    init_state =
+      map(phase_settings, fn phase ->
+        Computer.run_program(to_map(program, size), size, 0, [phase], [])
+      end)
+
+    hd(loop_amplifiers(init_state, size))
+  end
+
+  defp loop_amplifiers(program_last_state, size) do
+    case List.last(program_last_state) do
+      {:halt, outputs} ->
+        outputs
+
+      {:pending, _, _, outputs} ->
+        next_input =
+          case outputs do
+            # initial input
+            [] -> [0]
+            # input from last amplifer
+            [out | _] -> [out]
+          end
+
+        next_state =
+          scan(program_last_state, {:pending, nil, nil, next_input}, fn x, acc ->
+            pass_next_amplifier(x, acc, size)
+          end)
+
+        loop_amplifiers(next_state, size)
+    end
+  end
+
+  defp pass_next_amplifier(x, acc, size) do
+    next_inputs =
+      case acc do
+        {:pending, _, _, acc_outputs} -> hd(acc_outputs)
+        {:halt, acc_outputs} -> hd(acc_outputs)
+      end
+
+    case x do
+      {:pending, x_program, x_i, x_outputs} ->
+        Computer.run_program(x_program, size, x_i, [next_inputs], x_outputs)
+    end
   end
 
   defp parse(inputs) do
@@ -31,5 +78,9 @@ defmodule Y2019.Day07.Day07 do
     |> List.first()
     |> String.split(",")
     |> map(&String.to_integer/1)
+  end
+
+  defp to_map(program, size) do
+    0..(size - 1) |> Stream.zip(program) |> into(%{})
   end
 end
