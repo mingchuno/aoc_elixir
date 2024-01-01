@@ -3,12 +3,17 @@ import Enum
 defmodule Y2019.Computer.Computer do
   def compute(program, input) do
     size = length(program)
-    run_program(to_map(program, size), size, 0, input, [])
+
+    case run_program(to_program_map(program, size), size, 0, input, []) do
+      {:halt, outputs} -> outputs
+      {:pending, _, _, outputs} -> outputs
+    end
   end
 
-  defp run_program(_program, size, i, _inputs, outputs) when size == i, do: outputs
+  def run_program(_program, size, i, _inputs, outputs) when size == i, do: {:halt, outputs}
 
-  defp run_program(program, size, i, inputs, outputs) when is_map(program) do
+  def run_program(program, size, i, inputs, outputs) when is_map(program) do
+    # dbg()
     instruction = parse_instruction(program[i])
     {op, p_mode} = instruction
 
@@ -30,9 +35,13 @@ defmodule Y2019.Computer.Computer do
         run_program(new_program, size, i + 4, inputs, outputs)
 
       3 ->
-        [input | tail] = inputs
-        new_program = Map.put(program, program[i + 1], input)
-        run_program(new_program, size, i + 2, tail, outputs)
+        if empty?(inputs) do
+          {:pending, program, i, outputs}
+        else
+          [input | tail] = inputs
+          new_program = Map.put(program, program[i + 1], input)
+          run_program(new_program, size, i + 2, tail, outputs)
+        end
 
       4 ->
         param_0 = get_param.(0)
@@ -66,7 +75,7 @@ defmodule Y2019.Computer.Computer do
         run_program(new_program, size, i + 4, inputs, outputs)
 
       99 ->
-        outputs
+        {:halt, outputs}
     end
   end
 
@@ -102,7 +111,7 @@ defmodule Y2019.Computer.Computer do
     end
   end
 
-  defp to_map(program, size) do
+  def to_program_map(program, size) do
     0..(size - 1) |> Stream.zip(program) |> into(%{})
   end
 end

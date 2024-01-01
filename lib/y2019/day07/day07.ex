@@ -1,6 +1,6 @@
 import AocFile
 import Enum
-alias Y2019.Day07.Computer
+alias Y2019.Computer.Computer
 
 defmodule Y2019.Day07.Day07 do
   def part_1(input_file) do
