@@ -1,6 +1,7 @@
 import Enum
 
 defmodule Y2019.Computer.Computer do
+  @spec compute(list(integer()), list(integer())) :: list(integer())
   def compute(program, input) do
     size = length(program)
 
@@ -10,6 +11,19 @@ defmodule Y2019.Computer.Computer do
     end
   end
 
+  @type program() :: %{integer() => integer()}
+
+  @type program_state() ::
+          {:halt, list(integer())} | {:pending, program(), non_neg_integer(), list(integer())}
+
+  @spec run_program(
+          program(),
+          non_neg_integer(),
+          non_neg_integer(),
+          list(integer()),
+          list(integer())
+        ) ::
+          program_state()
   def run_program(_program, size, i, _inputs, outputs) when size == i, do: {:halt, outputs}
 
   def run_program(program, size, i, inputs, outputs) when is_map(program) do
@@ -111,10 +125,12 @@ defmodule Y2019.Computer.Computer do
     end
   end
 
+  @spec to_program_map(list(integer()), integer()) :: program()
   def to_program_map(program, size) do
     0..(size - 1) |> Stream.zip(program) |> into(%{})
   end
 
+  @spec parse(list(binary())) :: list(integer())
   def parse(inputs) do
     inputs
     |> List.first()
