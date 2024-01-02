@@ -49,8 +49,8 @@ defmodule Y2019.Computer.Computer do
 
     get_output_address = fn j ->
       case at(p_mode, j) do
-        2 -> program[relative_base + (program[i + 1 + j] || 0)] || 0
-        _ -> program[i + 1 + j] || 0
+        2 -> relative_base + (program[i + 1 + j] || 0)
+        0 -> program[i + 1 + j]
       end
     end
 
@@ -58,13 +58,13 @@ defmodule Y2019.Computer.Computer do
       1 ->
         param_0 = get_param.(0)
         param_1 = get_param.(1)
-        new_program = Map.put(program, program[i + 3], param_0 + param_1)
+        new_program = Map.put(program, get_output_address.(2), param_0 + param_1)
         run_program(new_program, i + 4, inputs, outputs, relative_base)
 
       2 ->
         param_0 = get_param.(0)
         param_1 = get_param.(1)
-        new_program = Map.put(program, program[i + 3], param_0 * param_1)
+        new_program = Map.put(program, get_output_address.(2), param_0 * param_1)
         run_program(new_program, i + 4, inputs, outputs, relative_base)
 
       3 ->
@@ -98,14 +98,14 @@ defmodule Y2019.Computer.Computer do
         param_0 = get_param.(0)
         param_1 = get_param.(1)
         store = if param_0 < param_1, do: 1, else: 0
-        new_program = Map.put(program, program[i + 3], store)
+        new_program = Map.put(program, get_output_address.(2), store)
         run_program(new_program, i + 4, inputs, outputs, relative_base)
 
       8 ->
         param_0 = get_param.(0)
         param_1 = get_param.(1)
         store = if param_0 == param_1, do: 1, else: 0
-        new_program = Map.put(program, program[i + 3], store)
+        new_program = Map.put(program, get_output_address.(2), store)
         run_program(new_program, i + 4, inputs, outputs, relative_base)
 
       9 ->
